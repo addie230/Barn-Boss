@@ -1,0 +1,12 @@
+.bun/
+.vs/
+build/
+*.exe
+*.obj
+*.ilk
+*.pdb
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+save.txt
