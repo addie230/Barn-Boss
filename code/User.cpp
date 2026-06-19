@@ -16,6 +16,7 @@ void User::profileInfo() const
 
 void User::logout()
 {
+    std::cout << "Goodbye, " << username << "!\n";
 }
 
 bool User::checkPassword(const std::string& candidatePassword) const
