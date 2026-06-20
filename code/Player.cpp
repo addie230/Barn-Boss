@@ -109,8 +109,7 @@ bool Player::addAnimal(int animalId)
 
 bool Player::harvest()
 {
-    farm.harvest(barn);
-    return true;
+    return farm.harvest(barn) > 0;
 }
 
 bool Player::buyItem(Market& market, int productId, int quantity)

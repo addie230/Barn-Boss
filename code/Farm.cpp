@@ -26,30 +26,28 @@ namespace
         }
         return collectedProducts;
     }
-
     ProductType seedProductType(int seedId)
     {
         switch (seedId)
         {
-            case 1: 
-                return ProductType::WheatSeed;
-            case 2: 
-                return ProductType::CornSeed;
-            default: 
-                throw std::runtime_error("Invalid seed id.");
+        case 1:
+            return ProductType::WheatSeed;
+        case 2:
+            return ProductType::CornSeed;
+        default:
+            throw std::runtime_error("Invalid seed id.");
         }
     }
-
     ProductType animalProductType(int animalId)
     {
         switch (animalId)
         {
-            case 3: 
-                return ProductType::Chicken;
-            case 4: 
-                return ProductType::Cow;
-            default: 
-                throw std::runtime_error("Invalid animal id.");
+        case 3:
+            return ProductType::Chicken;
+        case 4:
+            return ProductType::Cow;
+        default:
+            throw std::runtime_error("Invalid animal id.");
         }
     }
 }
@@ -148,9 +146,22 @@ void Farm::print() const
 {
     std::cout << "=== FARM ===\n"
         << "Cropland: " << cropland.size() << '/' << croplandCapacity
-        << ", free: " << freeCropland() << '\n'
-        << "Farmland: " << farmland.size() << '/' << farmlandCapacity
-        << ", free: " << freeFarmland() << '\n';
+        << ", free: " << freeCropland() << '\n';
+    for (const auto& entity : cropland)
+    {
+        std::cout << "  " << entity->getName()
+            << ": " << entity->getCurrentCycle()
+            << '/' << entity->getRequiredCycles()
+            << " cycles\n";
+    }
+    std::cout << "Farmland: " << farmland.size() << '/' << farmlandCapacity << ", free: " << freeFarmland() << '\n';
+    for (const auto& entity : farmland)
+    {
+        std::cout << "  " << entity->getName()
+            << ": " << entity->getCurrentCycle()
+            << '/' << entity->getRequiredCycles()
+            << " cycles\n";
+    }
 }
 
 bool Farm::expandCropland()
@@ -196,5 +207,9 @@ void Farm::addLoadedEntity(char category, int id, int currentCycle)
             throw std::runtime_error("Farmland capacity exceeded.");
         }
         farmland.push_back(std::make_unique<Animal>(id, currentCycle));
+    }
+    else
+    {
+        throw std::runtime_error("Invalid farm entity category.");
     }
 }
