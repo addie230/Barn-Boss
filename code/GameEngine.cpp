@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 namespace
 {
@@ -39,14 +40,6 @@ namespace
     bool readArgs(std::istringstream& in, int& first, int& second)
     {
         return (in >> first >> second) && ensureNoExtraInput(in);
-    }
-    bool readArgs(std::istringstream& in,
-        std::string& first,
-        int& second,
-        int& third,
-        int& fourth)
-    {
-        return (in >> first >> second >> third >> fourth) && ensureNoExtraInput(in);
     }
 }
 
@@ -140,6 +133,18 @@ void GameEngine::execute(const std::string& line)
             return;
         }
         current->profileInfo();
+        return;
+    }
+    if (cmd == "showScoreboard")
+    {
+        if (!ensureNoExtraInput(in))
+        {
+            std::cout << "Usage: showScoreboard\n";
+        }
+        else
+        {
+            Scoreboard::show(users);
+        }
         return;
     }
     if (auto* player = dynamic_cast<Player*>(current))
@@ -255,17 +260,6 @@ void GameEngine::handlePlayerCommand(const std::string& cmd, std::istringstream&
         else
         {
             tasks.print();
-        }
-    }
-    else if (cmd == "showScoreboard")
-    {
-        if (!ensureNoExtraInput(in))
-        {
-            std::cout << "Usage: showScoreboard\n";
-        }
-        else
-        {
-            Scoreboard::show(users);
         }
     }
     else if (cmd == "harvest")
@@ -463,14 +457,57 @@ void GameEngine::handleTaskManagerCommand(const std::string& cmd,
     }
     else if (cmd == "addTask")
     {
-        std::string productName;
-        int quantity{};
-        int rewardBalance{};
-        int rewardScore{};
-        if (!readArgs(in, productName, quantity, rewardBalance, rewardScore))
+        std::string rest;
+        std::getline(in, rest);
+        std::size_t start = rest.find_first_not_of(' ');
+        if (start == std::string::npos)
         {
             std::cout << "Usage: addTask <productName> <quantity> <rewardBalance> <rewardScore>\n";
             return;
+        }
+        rest = rest.substr(start);
+        std::istringstream restStream(rest);
+        std::vector<std::string> tokens;
+        std::string tok;
+        while (restStream >> tok) tokens.push_back(tok);
+
+        if (tokens.size() < 4)
+        {
+            std::cout << "Usage: addTask <productName> <quantity> <rewardBalance> <rewardScore>\n";
+            return;
+        }
+        int quantity{};
+        int rewardBalance{};
+        int rewardScore{};
+        auto parseIntStrict = [](const std::string& s, int& out) -> bool
+            {
+                try
+                {
+                    std::size_t pos{};
+                    out = std::stoi(s, &pos);
+                    return pos == s.size(); 
+                }
+                catch (const std::invalid_argument&) { return false; }
+                catch (const std::out_of_range&) { return false; }
+            };
+
+        if (!parseIntStrict(tokens[tokens.size() - 1], rewardScore) ||
+            !parseIntStrict(tokens[tokens.size() - 2], rewardBalance) ||
+            !parseIntStrict(tokens[tokens.size() - 3], quantity))
+        {
+            std::cout << "Usage: addTask <productName> <quantity> <rewardBalance> <rewardScore>\n";
+            return;
+        }
+        if (quantity <= 0 || rewardBalance < 0 || rewardScore < 0)
+        {
+            std::cout << "Invalid values: quantity must be > 0, rewards must be >= 0.\n";
+            return;
+        }
+        std::string productName;
+        for (std::size_t i = 0; i + 3 < tokens.size(); ++i)
+        {
+            if (i > 0) productName += ' ';
+            productName += tokens[i];
         }
         ProductType product = ProductType::Wheat;
         try
