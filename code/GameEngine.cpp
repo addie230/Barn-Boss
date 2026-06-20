@@ -4,7 +4,6 @@
 #include "MarketManager.h"
 #include "Player.h"
 #include "TaskManager.h"
-#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -55,7 +54,7 @@ void GameEngine::run()
     }
     banner();
     std::string line;
-    while (true)
+    while (running_)
     {
         std::cout << "> ";
         if (!std::getline(std::cin, line))
@@ -93,7 +92,8 @@ void GameEngine::execute(const std::string& line)
         }
         SaveManager::save(saveFile, users, market, tasks);
         std::cout << "Game saved successfully.\nGoodbye!\n";
-        std::exit(0);
+        running_ = false;
+        return;
     }
     if (!current)
     {
@@ -485,7 +485,7 @@ void GameEngine::handleTaskManagerCommand(const std::string& cmd,
                 {
                     std::size_t pos{};
                     out = std::stoi(s, &pos);
-                    return pos == s.size(); 
+                    return pos == s.size();
                 }
                 catch (const std::invalid_argument&) { return false; }
                 catch (const std::out_of_range&) { return false; }

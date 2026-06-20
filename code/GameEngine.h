@@ -16,6 +16,7 @@ private:
     TaskBoard tasks;
     User* current = nullptr;
     const std::string saveFile = "save.txt";
+    bool running_ = true;
     void handleNoUser(const std::string& cmd, std::istringstream& in);
     void handlePlayerCommand(const std::string& cmd, std::istringstream& in, Player* player);
     void handleMarketManagerCommand(const std::string& cmd, std::istringstream& in, MarketManager* manager);
