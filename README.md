@@ -18,7 +18,7 @@ The project applies the core concepts covered in the OOP course:
 
 **Abstract classes and inheritance** — `User` is an abstract base class with a pure virtual `getType()`. `Player`, `MarketManager`, and `TaskManager` inherit from it. Similarly, `FarmEntity` is abstract, with `Plant` and `Animal` as concrete subclasses.
 
-**Polymorphism** — `GameEngine` uses `dynamic_cast` to dispatch commands to the correct role at runtime. Virtual methods like `profileInfo()` behave differently depending on the actual type of the user.
+**Polymorphism** — users are manipulated through base-class (`User*`) interfaces while virtual methods such as `getType()` and `profileInfo()` resolve to the correct implementation at runtime.
 
 **Modern C++ resource management** — the project relies on STL containers and `std::unique_ptr` for ownership management. No manual memory management with `new` or `delete` is used.
 
@@ -76,7 +76,6 @@ Only one `MarketManager` and one `TaskManager` can exist at a time.
 | `checkFarm` | Show cropland and farmland |
 | `openMarketCatalog` | Browse the market |
 | `showTaskBoard` | See active tasks |
-| `showScoreboard` | See the leaderboard |
 | `harvest` | Collect ready crops and animals |
 
 ### Action Commands
@@ -147,4 +146,5 @@ Only one `MarketManager` and one `TaskManager` can exist at a time.
 | `login <username> <password>` | Log in |
 | `logout` | Log out |
 | `changePassword <old> <new>` | Change your password |
+| `showScoreboard` | See the leaderboard |
 | `exit` | Save and quit |
